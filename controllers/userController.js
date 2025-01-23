@@ -65,21 +65,26 @@ export const createData = async (req, res) => {
 
 export const verifyData = async (req, res) => {
     try {
-        const { token, verify } = req.params;
-        jwt.verify(token, 'ourSecretKey', function (err, decoded) {
+        const { token} = req.params;
+        jwt.verify(token, 'ourSecretKey', async function (err, decoded) {
             if (err) {
                 console.log(err);
                 res.send("Email verification failed, possibly the link is invalid or expired");
             }
             else {
                 res.send("Email verified successfully");
-                // // const ans=userSchema.findOneAndUpdate(token,)
-                // const filter = { varify: false };
-                // const update = { varify: true };
-                // // The result of `findOneAndUpdate()` is the document _before_ `update` was applied
-
-                // const doc = userSchema.findOneAndUpdate(filter, update);
-                // res.send(" successfully");
+                const ans = await userSchema.findOne({token : token })
+                if(ans){
+                    ans.token="";
+                    ans.verify = true;
+                    ans.save();
+                }
+                else{
+                    res.json({
+                        status: 404,
+                        message: "email not verified"
+                    })
+                }
             }
         });
     }
