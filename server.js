@@ -1,10 +1,11 @@
 import express from "express";
 import {mongoose} from "mongoose";
 import routes from '../backend/routes/userRoute.js'
+import bodyParser from 'body-parser';
 
 const app = express();
 const port = 3000 
-
+app.use(bodyParser.json());
 app.use(express.json())
 app.use("/note", routes)
 

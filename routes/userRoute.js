@@ -1,11 +1,12 @@
 import express from 'express'
-import { createData, verifyData } from '../controllers/userController.js';
-import { checkLogin } from '../loginCheck/loginCheck.js'
+import { createData, verifyData ,checkLogin} from '../controllers/userController.js';
+import { validateData } from '../middleware/validateData.js';
+import { userRegistrationSchema, userLoginSchema } from '../validator/userValidation.js';
 
 const route = express.Router();
 
-route.post('/create', createData);
+route.post('/create', validateData(userRegistrationSchema),createData);
 route.get('/verify/:token',verifyData);
-route.post('/check',checkLogin);
+route.post('/check',validateData(userLoginSchema),checkLogin);
 
 export default route;
